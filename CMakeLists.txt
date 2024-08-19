@@ -1,0 +1,5 @@
+cmake_minimum_required(VERSION 3.28)
+project(MIPS)
+set(CMAKE_CXX_STANDARD 26)
+add_executable(MIPS main.cpp)
+#target_compile_options(MIPS PRIVATE -Ofast -march=native)

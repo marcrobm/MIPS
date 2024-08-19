@@ -1,0 +1,44 @@
+####################################### Includes #####################################
+%include "asm/system.mips"
+####################################### CODE SECTION #################################
+# t0 is the printing position
+# t1 is the current character
+# t2 is a pointer to the string
+# t3 is the foreground color
+li      $t0, SYS_VRAM_START        # load start of screen into $t0
+addi    $t0, $t0, 8      # skip header
+li      $t2, HELLO_WORLD # load string pointer
+li      $t3, 30          # load initial black foreground color
+PRINT_LOOP:
+lbu     $t1, 0($t2)      # load current character
+#nop # delay slot for load
+beq     $t1, $zero, END  # if character is null, end
+#nop # delay slot for branch
+sb $t1, 3($t0) # store character to screen
+sb $t3, 0($t0) # store character attribute to screen
+addi $t3, $t3, 1
+jal RST_COLOR
+#nop
+addi $t0, $t0, 4
+addi $t2, $t2, 1
+j PRINT_LOOP
+
+END:
+j END
+
+RST_COLOR:
+# if t3 is 37, reset it to 30
+li $t4, 37
+#nop
+bne $t3, $t4, RST_FINISH
+#nop
+li $t3, 30
+jr $ra
+#nop
+RST_FINISH:
+jr $ra
+#nop
+
+####################################### DATA SECTION #################################
+HELLO_WORLD:
+        .ascii  "Hello World from MIPS Assembly :)\000"
